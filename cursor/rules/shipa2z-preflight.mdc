@@ -1,0 +1,12 @@
+---
+description: shipa2z preflight — strict QA, security, and anti-generic UI before shipping a vibecoded webapp
+alwaysApply: false
+---
+
+When the user asks to preflight, ship-check, or run shipa2z:
+
+1. Prefer Playwright role-based selectors and a multi-device matrix.
+2. Avoid per-test IdP logins; use a worker-scoped authenticated context when auth uses IndexedDB.
+3. Gate expensive LLM sends to one desktop project.
+4. Run through security + UI + pre-launch checklists before calling anything “done”.
+5. Never commit secrets or attack third-party systems.

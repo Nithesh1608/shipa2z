@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+playwright-report/
+test-results/
+strix_runs/
+.DS_Store
+*.log
+.auth/
+e2e/.auth/
+*.pem
+credentials*.json
+!.env.example
