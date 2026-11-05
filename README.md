@@ -1,164 +1,203 @@
 # shipa2z
 
-**A2Z checks before you ship a vibecoded webapp.**
+**A-to-Z checks before you ship a vibecoded webapp.**
 
-You vibe-coded a product in a weekend. It looks fine on your laptop.  
-Then a friend opens it on iPhone Safari and the composer sits under the browser chrome, the login button has the wrong accessible name, and a free-tier quota eats your demo.
+Your app looks fine on your laptop. Then someone opens it on a phone, a button name doesn’t match what the test looks for, or login gets rate-limited because every test signs in again.
 
-**shipa2z** is an open-source preflight pack for that moment — the stuff people usually invent chat-by-chat with an AI coding agent, bundled as one reusable kit:
-
-| Lane | What you get |
-|------|----------------|
-| **Strict QA** | Multi-device Playwright matrix that clicks real controls and fails loud |
-| **Auth that survives Firebase** | Worker-scoped browser context (IndexedDB sessions don’t fit `storageState`) |
-| **Security lane** | Headers baseline + a checklist you can walk without a paid scanner |
-| **UI lane** | Anti-generic design rules so the first viewport isn’t “AI purple dashboard” |
-| **Agent prompts** | Copy-paste Cursor / agent personas: strict checker, security auditor, UI polish |
-
-No app source from anyone’s private product lives here. Templates are generic. You bring your repo.
+shipa2z is a free kit for that moment: Playwright templates, security and UI checklists, and copy-paste agent prompts. Nothing here is your product. You copy the files into **your** app and change the names to match it.
 
 ---
 
-## Why this exists
+## Read this before you copy anything
 
-Vibecoding is great at *creating*. It is mediocre at *shipping*.
+The Playwright files are a **starting point**, not a finished test suite.
 
-The failure mode is always the same:
+They look for example labels like “Log in”, “Email”, “Settings”, and routes like `/login` and `/app`. If your button says “Continue” or your home is `/chat`, the first run fails until you change those strings.
 
-1. Agent builds features.
-2. You spot-check on one browser.
-3. Production meets phones, free quotas, Firebase auth quotas, and “aria-label says Send message but the test looks for Send”.
-4. You paste another 40 messages of “fix mobile”, “test every button”, “harden security”.
-
-shipa2z turns those recurring chats into **named lanes** you can drop into any Vite/React (or similar) webapp and run before launch.
+Search the copied files for `TODO`. Each one is a place you must edit.
 
 ---
 
-## Quick start
+## Start here
 
-```bash
-# clone
+You need Node.js and your app running locally, or a staging URL you own.
+
+### 1. Clone this kit
+
+**Windows (PowerShell)**
+
+```powershell
 git clone https://github.com/Nithesh1608/shipa2z.git
 cd shipa2z
-
-# read the map
-open docs/how-it-works.md   # or just read it in the editor
-
-# copy what you need into YOUR app
-cp -r playwright/templates/*   path/to/your-app/e2e/
-cp prompts/*.md                path/to/your-app/.cursor/prompts/   # or paste into chat
-cp checklists/pre-launch.md    path/to/your-app/docs/
 ```
 
-Then in *your* app:
+**macOS / Linux**
 
-1. Set `PLAYWRIGHT_BASE_URL` to staging or prod you own.
-2. Fill `e2e/.auth-credentials.example.json` → real file (gitignored).
-3. `npx playwright install chromium && npx playwright test`
-4. Walk `checklists/pre-launch.md` before you tweet the launch link.
+```bash
+git clone https://github.com/Nithesh1608/shipa2z.git
+cd shipa2z
+```
+
+### 2. Copy into your app
+
+`playwright.config.ts` goes next to your app’s `package.json`. The other test files go in `e2e/`. If you drop the config inside `e2e/`, Playwright looks in the wrong folder and nothing runs.
+
+Replace `C:\path\to\your-app` or `/path/to/your-app` with your real app folder.
+
+**Windows (PowerShell)** — run this from the `shipa2z` folder:
+
+```powershell
+$app = "C:\path\to\your-app"
+New-Item -ItemType Directory -Force "$app\e2e","$app\.cursor\prompts","$app\.cursor\rules","$app\docs" | Out-Null
+Copy-Item "playwright\templates\playwright.config.ts" "$app\playwright.config.ts"
+Copy-Item "playwright\templates\helpers.ts","playwright\templates\fixtures.ts","playwright\templates\full-matrix.spec.ts" "$app\e2e\"
+Copy-Item "playwright\templates\.auth-credentials.example.json" "$app\e2e\.auth-credentials.example.json"
+Copy-Item "prompts\*.md" "$app\.cursor\prompts\"
+Copy-Item "checklists\*.md","security\headers-baseline.md" "$app\docs\"
+Copy-Item "cursor\rules\shipa2z-preflight.mdc" "$app\.cursor\rules\"
+```
+
+**macOS / Linux** — run this from the `shipa2z` folder:
+
+```bash
+APP=/path/to/your-app
+mkdir -p "$APP/e2e" "$APP/.cursor/prompts" "$APP/.cursor/rules" "$APP/docs"
+cp playwright/templates/playwright.config.ts "$APP/playwright.config.ts"
+cp playwright/templates/helpers.ts playwright/templates/fixtures.ts playwright/templates/full-matrix.spec.ts "$APP/e2e/"
+cp playwright/templates/.auth-credentials.example.json "$APP/e2e/"
+cp prompts/*.md "$APP/.cursor/prompts/"
+cp checklists/*.md security/headers-baseline.md "$APP/docs/"
+cp cursor/rules/shipa2z-preflight.mdc "$APP/.cursor/rules/"
+```
+
+If your app already has a `playwright.config.ts`, don’t overwrite it. Merge the device projects from the template into yours.
+
+### 3. Make the tests match your app
+
+Open these files in **your** app and edit every `TODO`:
+
+| File | What to change |
+|------|----------------|
+| `e2e/full-matrix.spec.ts` | Page paths, and the visible text of your real buttons and links |
+| `e2e/helpers.ts` | Login path, where a logged-in user lands, cookie-banner button, Send button label |
+| `e2e/.auth-credentials.example.json` | Copy it to `e2e/.auth-credentials.json` and put a **test** email and password in that copy |
+
+`helpers.ts` imports `.auth-credentials.json` as soon as Playwright loads. Create that file before the first run, even if you only care about public pages.
+
+Add this line to your app’s `.gitignore`:
+
+```
+e2e/.auth-credentials.json
+```
+
+Button text must be the **accessible name**: the words a screen reader hears (`aria-label`, or the visible label). “Send message” and “Send” are different. Match the name your UI actually exposes.
+
+### 4. Install Playwright inside your app
+
+From your app folder:
+
+```bash
+npm i -D @playwright/test
+npx playwright install chromium
+```
+
+### 5. Run one browser first
+
+Start your app (Vite’s default is `http://127.0.0.1:5173`). Then:
+
+**Windows (PowerShell)**
+
+```powershell
+$env:PLAYWRIGHT_BASE_URL = "http://127.0.0.1:5173"
+npx playwright test --project=desktop-chrome
+```
+
+**macOS / Linux**
+
+```bash
+PLAYWRIGHT_BASE_URL=http://127.0.0.1:5173 npx playwright test --project=desktop-chrome
+```
+
+When desktop is green, run every device:
+
+```bash
+npx playwright test
+```
+
+That covers desktop, a laptop size, Pixel 7, iPhone SE / 13 / 14 Pro Max, and iPad. Phone projects use Chromium with those device sizes, so you don’t need a Mac for the first pass.
+
+### 6. Walk the checklists before you announce
+
+In your app’s `docs/` folder:
+
+1. `ui-design.md` — does the first screen look like your brand?
+2. `security.md` plus `headers-baseline.md` — secrets, auth, headers, quotas
+3. `pre-launch.md` — the last gate
 
 ---
 
-## What’s in the box
+## If a test fails
+
+| What you see | What to do |
+|--------------|------------|
+| Button or link not found | Change the name in the spec to the accessible name on the page. Don’t switch the test to a CSS class. |
+| Page not found / wrong screen | Change the path in `full-matrix.spec.ts` or `helpers.ts` (`/login`, `/app`, and the URL you wait for after login). |
+| `Cannot find module './.auth-credentials.json'` | Create `e2e/.auth-credentials.json` from the example file. |
+| Login says too many attempts / quota | Stop rerunning the suite in a tight loop. The fixture signs in once per device worker on purpose. |
+| Horizontal overflow | That’s a real layout bug. Fix the page, not the assertion. |
+| A chat box sends a real model request | That test runs on `desktop-chrome` only. Other devices only check the shell. |
+
+A failure report opens with `npx playwright show-report` after a run.
+
+---
+
+## Use it with Cursor or any coding agent
+
+Open **your app**, not this kit. Paste one file from `.cursor/prompts/` as the task:
+
+| Prompt | Ask the agent to |
+|--------|------------------|
+| `01-strict-qa-checker.md` | Be a hostile QA. Adapt the tests to this app’s real names, then keep `desktop-chrome` green. |
+| `02-security-auditor.md` | Walk `docs/security.md` and list fixes. |
+| `03-ui-polish.md` | Fix the first screen so it doesn’t look like a default AI template. |
+| `04-device-matrix-runner.md` | Run the device matrix and fix what fails. |
+
+The optional Cursor rule is `.cursor/rules/shipa2z-preflight.mdc`.
+
+---
+
+## What’s in this repo
 
 ```
 shipa2z/
-├── README.md                 ← you are here
-├── docs/
-│   ├── how-it-works.md       ← mental model + flow
-│   └── viral-one-pager.md    ← shareable pitch
-├── checklists/
-│   ├── pre-launch.md         ← single launch gate
-│   ├── security.md
-│   └── ui-design.md
-├── prompts/
-│   ├── 01-strict-qa-checker.md
-│   ├── 02-security-auditor.md
-│   ├── 03-ui-polish.md
-│   └── 04-device-matrix-runner.md
-├── playwright/
-│   ├── README.md
-│   └── templates/            ← drop into your e2e/
-├── security/
-│   └── headers-baseline.md
-└── cursor/
-    └── rules/                ← optional Cursor project rules
+├── README.md                      ← you are here
+├── docs/how-it-works.md           ← why each lane exists
+├── checklists/                    ← copy into your app’s docs/
+├── prompts/                       ← paste into an agent chat
+├── playwright/templates/          ← config + tests you edit
+├── security/headers-baseline.md
+└── cursor/rules/                  ← optional Cursor rule
 ```
 
----
+| Lane | File | You use it to |
+|------|------|----------------|
+| Strict QA | `playwright/templates/` | Click real controls on many screen sizes |
+| Security | `checklists/security.md`, `security/headers-baseline.md` | Catch missing headers, leaked keys, open APIs |
+| UI | `checklists/ui-design.md`, `prompts/03-ui-polish.md` | Keep the first screen from looking generic |
+| Launch gate | `checklists/pre-launch.md` | Decide if you can announce |
 
-## The strict-checker idea
-
-Don’t ask the agent “is it good?”  
-Ask it to **be a hostile QA**:
-
-- Every primary button/link on public + authed surfaces
-- Desktop + laptop + Pixel + iPhone SE/13/14 + iPad viewports
-- Assert **no horizontal overflow**
-- Match **accessible names** (`getByRole`), not brittle CSS
-- One login per device worker (Firebase Auth ≠ Playwright `storageState`)
-- Burn LLM tokens on **one** desktop project; other devices click chrome only
-
-The templates under `playwright/templates/` encode that. The prompt under `prompts/01-strict-qa-checker.md` is the chat persona.
-
----
-
-## Security without cosplay
-
-1. Walk `checklists/security.md` (auth, headers, secrets, quotas).
-2. Compare your hosting headers to `security/headers-baseline.md`.
-3. Keep findings in *your* private notes; don’t commit secrets.
-
----
-
-## UI that doesn’t look “AI default”
-
-`checklists/ui-design.md` + `prompts/03-ui-polish.md` push agents away from:
-
-- purple-on-white gradient landing clones  
-- cream + terracotta “editorial” clones  
-- card-soup heroes and pill-stat strips  
-
-…and toward brand-first first viewports, real imagery, and intentional motion.
-
----
-
-## How to use this with Cursor (or any agent)
-
-1. Open your app repo.
-2. Paste a prompt from `prompts/` as the system/task message.
-3. Point the agent at the matching checklist.
-4. For QA: copy Playwright templates, fill credentials, run the matrix.
-5. For security: walk the checklist and header baseline on **your** staging URL.
-6. Tick `checklists/pre-launch.md` until it’s boringly green.
-
-That’s the product: **one package instead of twenty half-remembered chats.**
+More detail: [docs/how-it-works.md](docs/how-it-works.md). Playwright notes: [playwright/README.md](playwright/README.md).
 
 ---
 
 ## Name
 
-**shipa2z** = *ship A-to-Z* — the unglamorous checklist between “it runs on localhost” and “strangers will use it.”
-
----
+**shipa2z** means ship A-to-Z: the checks between “it runs on localhost” and “strangers will use it.”
 
 ## License
 
-MIT — use it, fork it, roast it, improve it.
+MIT. Use it, fork it, improve it.
 
-## Contributing
+PRs are welcome for device presets, Next.js / SvelteKit notes, and a GitHub Action that runs the public tests. Don’t PR private app source, customer data, or real passwords.
 
-PRs welcome for:
-
-- more device presets  
-- framework adapters (Next, SvelteKit, etc.)  
-- CI examples that run the public matrix on PRs  
-- sharper anti-generic UI rules  
-
-Please **do not** PR proprietary app source, customer data, or real credentials.
-
----
-
-## Disclaimer
-
-This is a toolkit for owners testing their own apps. Do not point scanners or attack agents at systems you are not authorized to test.
+This kit is for testing apps you own.

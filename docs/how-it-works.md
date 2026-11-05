@@ -30,7 +30,7 @@ vibecode → shipa2z lanes → green gates → ship
 4. Authenticated suite uses a **worker-scoped browser context** so Firebase (IndexedDB) sessions survive across tests without re-login spam (which triggers `auth/quota-exceeded`).
 5. Heavy LLM chat sends run on **desktop-chrome only**; other devices still exercise UI chrome.
 
-Copy `playwright/templates/` into your app’s `e2e/`. Adapt selectors to *your* copy (“Log in” vs “Sign in”).
+Copy `playwright.config.ts` to your app root and the other templates into `e2e/`. The [README](../README.md) has Windows and macOS commands. Then change every `TODO`: button names and routes must match your app (“Log in” vs “Sign in”, `/app` vs `/chat`).
 
 ## Lane 2 — Security
 
