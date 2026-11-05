@@ -38,6 +38,6 @@ Owner-authorized testing only.
 - [ ] Prompt-injection isolation if you wrap an LLM (system vs user boundaries)
 - [ ] File uploads (if any) typed + size-capped
 
-## Optional attacker pass
-- [ ] Strix (or similar) against staging URL you own — see `security/strix-quickstart.md`
-- [ ] Findings triaged; criticals fixed before launch
+## Before you announce
+- [ ] Header baseline checked on the live staging URL (`security/headers-baseline.md`)
+- [ ] Critical checklist items fixed before launch

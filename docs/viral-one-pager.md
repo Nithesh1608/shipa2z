@@ -7,7 +7,7 @@ Your vibecoded webapp works on your MacBook.
 shipa2z is the A-to-Z preflight before strangers open it on an iPhone SE.
 
 ### What it is
-An open MIT kit: Playwright multi-device strict QA, security checklist + Strix howto, anti-generic UI rules, and Cursor agent prompts — one package instead of twenty Discord threads.
+An open MIT kit: Playwright multi-device strict QA, a security checklist and header baseline, anti-generic UI rules, and Cursor agent prompts — one package instead of twenty Discord threads.
 
 ### Who it’s for
 Solo builders and tiny teams who shipped with AI agents and need a **hostile QA persona** before Product Hunt / Twitter / grandma.

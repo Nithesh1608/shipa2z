@@ -11,7 +11,7 @@ Then a friend opens it on iPhone Safari and the composer sits under the browser 
 |------|----------------|
 | **Strict QA** | Multi-device Playwright matrix that clicks real controls and fails loud |
 | **Auth that survives Firebase** | Worker-scoped browser context (IndexedDB sessions don’t fit `storageState`) |
-| **Security lane** | Headers/checklist + how to run [Strix](https://github.com/usestrix/strix) without inventing the workflow |
+| **Security lane** | Headers baseline + a checklist you can walk without a paid scanner |
 | **UI lane** | Anti-generic design rules so the first viewport isn’t “AI purple dashboard” |
 | **Agent prompts** | Copy-paste Cursor / agent personas: strict checker, security auditor, UI polish |
 
@@ -80,7 +80,6 @@ shipa2z/
 │   ├── README.md
 │   └── templates/            ← drop into your e2e/
 ├── security/
-│   ├── strix-quickstart.md
 │   └── headers-baseline.md
 └── cursor/
     └── rules/                ← optional Cursor project rules
@@ -106,9 +105,9 @@ The templates under `playwright/templates/` encode that. The prompt under `promp
 
 ## Security without cosplay
 
-1. Walk `checklists/security.md` (auth, headers, secrets, quotas, well-known).
-2. If you want an autonomous attacker, follow `security/strix-quickstart.md` — **only against targets you own**.
-3. Keep findings in *your* private run folder; don’t commit secrets.
+1. Walk `checklists/security.md` (auth, headers, secrets, quotas).
+2. Compare your hosting headers to `security/headers-baseline.md`.
+3. Keep findings in *your* private notes; don’t commit secrets.
 
 ---
 
@@ -130,7 +129,7 @@ The templates under `playwright/templates/` encode that. The prompt under `promp
 2. Paste a prompt from `prompts/` as the system/task message.
 3. Point the agent at the matching checklist.
 4. For QA: copy Playwright templates, fill credentials, run the matrix.
-5. For security: Strix cloud or OSS against **your** staging URL.
+5. For security: walk the checklist and header baseline on **your** staging URL.
 6. Tick `checklists/pre-launch.md` until it’s boringly green.
 
 That’s the product: **one package instead of twenty half-remembered chats.**
@@ -153,7 +152,7 @@ PRs welcome for:
 
 - more device presets  
 - framework adapters (Next, SvelteKit, etc.)  
-- better Strix / CI examples  
+- CI examples that run the public matrix on PRs  
 - sharper anti-generic UI rules  
 
 Please **do not** PR proprietary app source, customer data, or real credentials.

@@ -11,7 +11,7 @@ Thanks for helping vibecoders ship with fewer faceplants.
 - Next.js / SvelteKit / Remix adapter notes
 - GitHub Action that runs the public matrix on PRs
 - More device presets / WebKit notes for macOS CI
-- Better Strix CI examples
+- Sharper security checklist items that stay free to run
 - Translations of the checklists
 
 ## Local

@@ -5,7 +5,6 @@ dist/
 !.env.example
 playwright-report/
 test-results/
-strix_runs/
 .DS_Store
 *.log
 .auth/

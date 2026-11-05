@@ -13,7 +13,7 @@ shipa2z replaces the loop with **lanes**:
 vibecode → shipa2z lanes → green gates → ship
               │
               ├── Strict QA (Playwright device matrix)
-              ├── Security (checklist + optional Strix)
+              ├── Security (checklist + header baseline)
               ├── UI (anti-generic rules + polish prompt)
               └── Pre-launch (single checklist)
 ```
@@ -39,8 +39,7 @@ Copy `playwright/templates/` into your app’s `e2e/`. Adapt selectors to *your*
 **Mechanism:**
 
 1. Human-readable `checklists/security.md`.
-2. Optional autonomous pentest via Strix (`security/strix-quickstart.md`) against **owned** staging/prod.
-3. Baseline security headers list for hosting configs.
+2. Baseline security headers list for hosting configs (`security/headers-baseline.md`).
 
 ## Lane 3 — UI polish
 
@@ -70,5 +69,4 @@ That’s `checklists/pre-launch.md`. If any row is red, you don’t ship.
 2. Drop Playwright templates → green public matrix on desktop.
 3. Add auth fixture → green authed chrome on phones.
 4. Security checklist → fix headers/secrets.
-5. Optional Strix quick scan on staging.
-6. Pre-launch checklist → announce.
+5. Pre-launch checklist → announce.

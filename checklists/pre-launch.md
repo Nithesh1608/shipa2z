@@ -25,7 +25,6 @@ Tick every box. If you skip one, write why.
 - [ ] `checklists/security.md` completed
 - [ ] Security headers present on hosting
 - [ ] Rate limits / quotas fail gracefully
-- [ ] Optional: Strix (or equivalent) run on **owned** staging
 
 ## UI / brand
 - [ ] First viewport passes the brand test (nav removed → still recognizable)
